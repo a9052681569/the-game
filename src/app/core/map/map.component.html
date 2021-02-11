@@ -1,0 +1,4 @@
+<ng-container *ngIf="playerPosition$ | async as position">
+	<app-player #player class="player" [ngStyle]="{'top': position.y + 'px', 'left': position.x + 'px'}"></app-player>
+</ng-container>
+<ng-template appDynamicContent></ng-template>

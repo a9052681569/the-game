@@ -1,0 +1,11 @@
+:host {
+	display: block;
+	width: 1000vw;
+	height: 1000vh;
+	background-color: #888888;
+	position: relative;
+}
+
+.player {
+	position: absolute;
+}
