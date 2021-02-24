@@ -7,6 +7,7 @@ import { PlayerComponent } from './core/player/player.component';
 import { EnemyComponent } from './core/enemy/enemy.component';
 import { BulletComponent } from './core/bullet/bullet.component';
 import { DynamicContentDirective } from './core/dynamic-content.directive';
+import { BoxComponent } from './core/box/box.component';
 
 @NgModule({
   declarations: [
@@ -15,7 +16,8 @@ import { DynamicContentDirective } from './core/dynamic-content.directive';
     PlayerComponent,
     EnemyComponent,
     BulletComponent,
-    DynamicContentDirective
+    DynamicContentDirective,
+    BoxComponent
   ],
   imports: [
     BrowserModule

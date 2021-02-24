@@ -2,6 +2,7 @@ import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {Position} from '../player/player-store.service';
 import {interval, Subject} from 'rxjs';
 import {takeUntil, tap} from 'rxjs/operators';
+import {BoxState, BoxStoreService} from '../box/box-store.service';
 
 @Component({
 	selector: 'app-bullet',
@@ -24,9 +25,16 @@ export class BulletComponent implements OnInit, OnDestroy {
 	bulletSpeed = 10;
 	bulletStep = 10;
 
-	constructor() { }
+	boxes: BoxState[];
+
+	constructor(private bs: BoxStoreService) { }
 
 	ngOnInit(): void {
+		this.bs.select(s => s.boxes)
+			.pipe(takeUntil(this.destroyer$$))
+			.subscribe(b => {
+				this.boxes = b;
+			});
 
 		this.setFactors();
 
@@ -51,6 +59,14 @@ export class BulletComponent implements OnInit, OnDestroy {
 						this.bulletPos.x -= this.bulletStep * this.xFactor;
 					}
 
+					this.boxes.forEach(box => {
+						if (this.bulletPos.y >= box.position.y && this.bulletPos.y <= box.position.y + box.size.height) {
+							if (this.bulletPos.x >= box.position.x && this.bulletPos.x <= box.position.x + box.size.width) {
+								this.bs.damage(box.id);
+								this.destroy();
+							}
+						}
+					});
 				})
 			)
 			.subscribe();
@@ -83,5 +99,7 @@ export class BulletComponent implements OnInit, OnDestroy {
 			this.xFactor = 1 - this.yFactor;
 		}
 	}
+
+	destroy(): void {}
 
 }

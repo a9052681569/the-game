@@ -13,8 +13,6 @@ import {BulletComponent} from '../bullet/bullet.component';
 })
 export class PlayerComponent implements OnInit {
 
-
-
 	deg = 70;
 
 	playerPosition: Position;
@@ -28,7 +26,7 @@ export class PlayerComponent implements OnInit {
 
 	private stepTime = 10;
 
-	constructor(private ps: PlayerStoreService,) { }
+	constructor(private ps: PlayerStoreService) { }
 
 	ngOnInit(): void {
 		this.initMoveHandler();

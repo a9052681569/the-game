@@ -1,0 +1,8 @@
+<div class="box" [ngStyle]="{
+'top': box?.position.y + 'px',
+'left': box.position?.x + 'px',
+'width': box.size.width + 'px',
+'height': box.size.height + 'px'
+}">
+	<div class="hp-bar" [ngStyle]="{'width': hpPercentage + 'px'}"></div>
+</div>

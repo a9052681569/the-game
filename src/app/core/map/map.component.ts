@@ -3,6 +3,8 @@ import {DirectionVariants, PlayerState, PlayerStoreService, Position} from '../p
 import {fromEvent, Observable} from 'rxjs';
 import {DynamicContentDirective} from '../dynamic-content.directive';
 import {BulletComponent} from '../bullet/bullet.component';
+import {BoxState, BoxStoreService} from '../box/box-store.service';
+import {BoxComponent} from '../box/box.component';
 
 @Component({
 	selector: 'app-map',
@@ -21,9 +23,40 @@ export class MapComponent implements OnInit {
 
 	constructor(
 		private ps: PlayerStoreService,
-		private componentFactoryResolver: ComponentFactoryResolver) { }
+		private componentFactoryResolver: ComponentFactoryResolver,
+		private bs: BoxStoreService) { }
 
 	ngOnInit(): void {
+		this.getPlayerPosition();
+
+		this.initFireHandler();
+
+		this.bs.select(s => {
+				if (s.lastAddedBox) {
+					this.renderBox(s.lastAddedBox);
+				}
+			})
+			.subscribe();
+
+		for (let i = 0; i < 100; i++) {
+			this.bs.addBox();
+		}
+	}
+
+	renderBox(box: BoxState): void {
+		const dynamicComponentFactory = this.componentFactoryResolver.resolveComponentFactory(
+			BoxComponent
+		);
+		const dynamicComponent = this.dynamicContent?.viewContainerRef.createComponent(dynamicComponentFactory);
+
+		dynamicComponent.instance.box = box;
+
+		dynamicComponent.instance.destroy = () => {
+			dynamicComponent.destroy();
+		};
+	}
+
+	getPlayerPosition(): void {
 		this.playerPosition$ = this.ps.select(s => {
 			const y = s.position.y - window.innerHeight / 2;
 			const x = s.position.x - window.innerWidth / 2;
@@ -34,7 +67,9 @@ export class MapComponent implements OnInit {
 			window.scrollTo(x, y);
 			return s.position;
 		});
+	}
 
+	initFireHandler(): void {
 		fromEvent(document.body, 'click')
 			.subscribe((e: MouseEvent) => {
 				this.fire();
@@ -50,6 +85,9 @@ export class MapComponent implements OnInit {
 
 		dynamicComponent.instance.position = this.playerPosition;
 		dynamicComponent.instance.angle = this.angle;
+		dynamicComponent.instance.destroy = () => {
+			dynamicComponent.destroy();
+		};
 
 		setTimeout(() => {
 			dynamicComponent.destroy();
